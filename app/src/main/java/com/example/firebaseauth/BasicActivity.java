@@ -1,12 +1,11 @@
 package com.example.firebaseauth;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Context;
-import android.os.Bundle;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ProgressBar;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 public class BasicActivity extends AppCompatActivity {
     public ProgressBar mProgressBar;

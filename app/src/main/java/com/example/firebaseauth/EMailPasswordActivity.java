@@ -1,8 +1,5 @@
 package com.example.firebaseauth;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -10,18 +7,21 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+
 import com.example.firebaseauth.databinding.ActivityEmailpasswordBinding;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 
 public class EMailPasswordActivity extends BasicActivity implements View.OnClickListener {
     private static final String TAG = "EmailPassword";
     private ActivityEmailpasswordBinding mBinding;
     private FirebaseAuth mAuth;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -37,6 +37,7 @@ public class EMailPasswordActivity extends BasicActivity implements View.OnClick
         mAuth = FirebaseAuth.getInstance();
     }
 
+    // Проверяем что пользователь уже зареган
     @Override
     protected void onStart() {
         super.onStart();
@@ -44,10 +45,9 @@ public class EMailPasswordActivity extends BasicActivity implements View.OnClick
         updateUI(currentUser);
     }
 
-    private void createAccount(String email,String password)
-    {
-        if(!validateForm())
-        {
+    // Новый пользователь
+    private void createAccount(String email, String password) {
+        if (!validateForm()) {
             return;
         }
         showProgressBar();
@@ -72,10 +72,9 @@ public class EMailPasswordActivity extends BasicActivity implements View.OnClick
                 });
     }
 
-    private void singIn(String email,String password)
-    {
-        if(!validateForm())
-        {
+    // Вход существующего пользователя
+    private void signIn(String email, String password) {
+        if (!validateForm()) {
             return;
         }
         showProgressBar();
@@ -101,22 +100,22 @@ public class EMailPasswordActivity extends BasicActivity implements View.OnClick
                 });
     }
 
-    private void singOut()
-    {
+    // Выход пользователя
+    private void singOut() {
         mAuth.signOut();
         updateUI(null);
     }
 
-    private void sentEmailVerification()
-    {
+    // Верификация через e-mail
+    private void sentEmailVerification() {
         mBinding.verifyEmailButton.setEnabled(false);
-        final FirebaseUser user=mAuth.getCurrentUser();
+        final FirebaseUser user = mAuth.getCurrentUser();
         user.sendEmailVerification().addOnCompleteListener(this, new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
-                    mBinding.verifyEmailButton.setEnabled(true);
+                mBinding.verifyEmailButton.setEnabled(true);
                 if (task.isSuccessful()) {
-                    Toast.makeText(EMailPasswordActivity.this, "Verification email to "+user.getEmail(), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(EMailPasswordActivity.this, "Verification email to " + user.getEmail(), Toast.LENGTH_SHORT).show();
                 } else {
                     Toast.makeText(EMailPasswordActivity.this, "Verification failed.",
                             Toast.LENGTH_SHORT).show();
@@ -125,32 +124,30 @@ public class EMailPasswordActivity extends BasicActivity implements View.OnClick
         });
     }
 
-    private void reload()
-    {
+    // Перезагрузка UI после верификации в email
+    private void reload() {
         mAuth.getCurrentUser().reload().addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
-                if(task.isSuccessful())
-                {
+                if (task.isSuccessful()) {
                     updateUI(mAuth.getCurrentUser());
                     Toast.makeText(EMailPasswordActivity.this, "reload successful", Toast.LENGTH_SHORT).show();
-                }
-                else
-                {
+                } else {
                     Toast.makeText(EMailPasswordActivity.this, "reload failed", Toast.LENGTH_SHORT).show();
                 }
             }
         });
     }
+
+    // Обработчик нажатия на кнопки
     @Override
     public void onClick(View view) {
-        switch(view.getId())
-        {
+        switch (view.getId()) {
             case R.id.emailCreateAccountButton:
-                createAccount(mBinding.fieldEmail.getText().toString(),mBinding.fieldPassword.getText().toString());
+                createAccount(mBinding.fieldEmail.getText().toString(), mBinding.fieldPassword.getText().toString());
                 break;
             case R.id.emailSignInButton:
-                singIn(mBinding.fieldEmail.getText().toString(),mBinding.fieldPassword.getText().toString());
+                signIn(mBinding.fieldEmail.getText().toString(), mBinding.fieldPassword.getText().toString());
                 break;
             case R.id.signOutButton:
                 singOut();
@@ -164,6 +161,7 @@ public class EMailPasswordActivity extends BasicActivity implements View.OnClick
         }
     }
 
+    // Меняем Интерфейс в зависимости от ситуации (статуса регистрации Юзера)
     private void updateUI(FirebaseUser user) {
         hideProgressBar();
         if (user != null) {
@@ -176,7 +174,7 @@ public class EMailPasswordActivity extends BasicActivity implements View.OnClick
             mBinding.signedInButtons.setVisibility(View.VISIBLE);
 
             if (user.isEmailVerified()) {
-                startActivity(new Intent(getApplicationContext(),MainActivity.class));
+                startActivity(new Intent(getApplicationContext(), MainActivity.class));
                 mBinding.verifyEmailButton.setVisibility(View.GONE);
             } else {
                 mBinding.verifyEmailButton.setVisibility(View.VISIBLE);
@@ -191,6 +189,7 @@ public class EMailPasswordActivity extends BasicActivity implements View.OnClick
         }
     }
 
+    // Проверка на корректное заполнение формы
     private boolean validateForm() {
         boolean valid = true;
 

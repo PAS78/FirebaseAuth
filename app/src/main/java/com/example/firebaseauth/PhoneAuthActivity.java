@@ -1,15 +1,10 @@
 package com.example.firebaseauth;
 
-import androidx.appcompat.app.AppCompatActivity;
-
-import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
 
 import com.example.firebaseauth.databinding.ActivityPhoneAuthBinding;
-
-import java.util.concurrent.TimeUnit;
 
 public class PhoneAuthActivity extends BasicActivity implements View.OnClickListener {
     private static final String TAG = "PhoneAuthActivity";
@@ -27,6 +22,7 @@ public class PhoneAuthActivity extends BasicActivity implements View.OnClickList
     private String mVerificationId;
 
     private ActivityPhoneAuthBinding mBinding;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -36,7 +32,7 @@ public class PhoneAuthActivity extends BasicActivity implements View.OnClickList
         if (savedInstanceState != null) {
             onRestoreInstanceState(savedInstanceState);
         }
-        int n=7;
+        int n = 7;
         mBinding.buttonStartVerification.setOnClickListener(this);
         mBinding.buttonVerifyPhone.setOnClickListener(this);
         mBinding.buttonResend.setOnClickListener(this);

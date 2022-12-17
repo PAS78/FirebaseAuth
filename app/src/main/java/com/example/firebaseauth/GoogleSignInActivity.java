@@ -1,16 +1,16 @@
 package com.example.firebaseauth;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 
-import com.example.firebaseauth.databinding.ActivityGoogleSignInBinding;
+import androidx.annotation.NonNull;
 
+import com.example.firebaseauth.databinding.ActivityGoogleSignInBinding;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -20,15 +20,16 @@ import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
-import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.firebase.auth.GoogleAuthProvider;
 
+// https://firebase.google.com/docs/auth/android/google-signin
 public class GoogleSignInActivity extends BasicActivity implements View.OnClickListener {
+
     private static final String TAG = "GoogleActivity";
     private static final int RC_SIGN_IN = 9001;
     private ActivityGoogleSignInBinding mBinding;
     private FirebaseAuth mAuth;
+    // Подключаем из API
     private GoogleSignInClient mGoogleSignInClient;
 
     @Override
@@ -41,11 +42,14 @@ public class GoogleSignInActivity extends BasicActivity implements View.OnClickL
         mBinding.signInButton.setOnClickListener(this);
         mBinding.signOutButton.setOnClickListener(this);
         mBinding.disconnectButton.setOnClickListener(this);
+
+        // Опции настройки Token
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(getString(R.string.default_web_client_id))
                 .requestEmail()
                 .build();
-        mGoogleSignInClient=GoogleSignIn.getClient(this,gso);
+        mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
+
         mAuth = FirebaseAuth.getInstance();
     }
 
@@ -56,12 +60,13 @@ public class GoogleSignInActivity extends BasicActivity implements View.OnClickL
         updateUI(currentUser);
     }
 
-    private void signIn()
-    {
-        Intent signInIntent=mGoogleSignInClient.getSignInIntent();
+    // Входим через отдельную Активити
+    private void signIn() {
+        Intent signInIntent = mGoogleSignInClient.getSignInIntent();
         startActivityForResult(signInIntent, RC_SIGN_IN);
     }
 
+    // Считываем результат работы активити (успешность авторизации)
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -82,6 +87,7 @@ public class GoogleSignInActivity extends BasicActivity implements View.OnClickL
         }
     }
 
+    // Аутентификация в Firebase через полученный Токен пользователя
     private void firebaseAuthWithGoogle(String idToken) {
         showProgressBar();
         AuthCredential credential = GoogleAuthProvider.getCredential(idToken, null);
@@ -104,6 +110,7 @@ public class GoogleSignInActivity extends BasicActivity implements View.OnClickL
                     }
                 });
     }
+
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
@@ -111,10 +118,8 @@ public class GoogleSignInActivity extends BasicActivity implements View.OnClickL
                 signIn();
                 break;
             case R.id.signOutButton:
-
                 break;
-            case  R.id.disconnectButton:
-
+            case R.id.disconnectButton:
                 break;
         }
     }
@@ -127,7 +132,7 @@ public class GoogleSignInActivity extends BasicActivity implements View.OnClickL
 
             mBinding.signInButton.setVisibility(View.GONE);
             mBinding.signOutAndDisconnect.setVisibility(View.VISIBLE);
-            startActivity(new Intent(getApplicationContext(),MainActivity.class));
+            startActivity(new Intent(getApplicationContext(), MainActivity.class));
         } else {
             mBinding.status.setText(R.string.signed_out);
             mBinding.detail.setText(null);

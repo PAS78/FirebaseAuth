@@ -11,7 +11,8 @@
         <activity android:name=".GoogleSignInActivity"></activity>
         <activity android:name=".PhoneAuthActivity" />
         <activity android:name=".EMailPasswordActivity" />
-        <activity android:name=".ChooserActivity"
+        <activity
+            android:name=".ChooserActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
